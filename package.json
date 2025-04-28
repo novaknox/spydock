@@ -1,0 +1,22 @@
+{
+  "name": "spydock",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite"
+  },
+  "keywords": ["game", "spy", "social", "multiplayer"],
+  "author": "",
+  "license": "ISC",
+  "description": "A social deduction game where players try to identify the spy among them",
+  "devDependencies": {
+    "vite": "^6.3.3",
+    "vite-plugin-html": "^3.2.2"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "firebase": "^11.6.1",
+    "socket.io": "^4.7.5"
+  }
+}
