@@ -331,3 +331,19 @@ input:focus, select:focus {
         height: 350px;
     }
 }
+
+.logo-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.logo {
+    width: 190px;
+    height: 150px;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+}
