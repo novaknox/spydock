@@ -1,9 +1,9 @@
 // Game state variables
-const isDevelopment = window.location.hostname === 'localhost';
-const socketUrl = isDevelopment ? 'http://localhost:3000' : 'https://spydock.onrender.com';
+const isVercel = window.location.hostname.includes('vercel.app');
+const socketUrl = isVercel ? 'https://spydock.vercel.app' : 'https://spydock.onrender.com';
 let socket = io(socketUrl, {
-  transports: ['websocket'],
-  upgrade: false
+  path: '/socket.io/',
+  transports: ['websocket', 'polling']
 });
 let playerName = '';
 let gameId = '';
@@ -294,15 +294,15 @@ function handleGameStarted(data) {
     // Assign role and word to current player
     const playerRoleData = data.roles.find(r => r.playerId === socket.id);
     if (playerRoleData) {
-        playerRole = playerRoleData.role;
-        gameWord = playerRoleData.word;
-        
-        // Update UI
-        roleTypeDisplay.textContent = playerRole === 'spy' ? 'Spy' : 'Regular Player';
-        wordDisplay.textContent = gameWord;
-        
-        // Show role screen
-        showScreen(roleScreen);
+    playerRole = playerRoleData.role;
+    gameWord = playerRoleData.word;
+    
+    // Update UI
+    roleTypeDisplay.textContent = playerRole === 'spy' ? 'Spy' : 'Regular Player';
+    wordDisplay.textContent = gameWord;
+    
+    // Show role screen
+    showScreen(roleScreen);
     }
     
     // Start timer if discussion time is set
