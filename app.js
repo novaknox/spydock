@@ -1,9 +1,9 @@
 // Game state variables
-const isVercel = window.location.hostname.includes('vercel.app');
-const socketUrl = isVercel ? 'https://spydock.vercel.app' : 'https://spydock.onrender.com';
+const isDevelopment = window.location.hostname === 'localhost';
+const socketUrl = isDevelopment ? 'http://localhost:3000' : 'https://spydock.onrender.com';
 let socket = io(socketUrl, {
-  path: '/socket.io/',
-  transports: ['websocket', 'polling']
+  transports: ['websocket'],
+  upgrade: false
 });
 let playerName = '';
 let gameId = '';

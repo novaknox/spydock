@@ -8,23 +8,15 @@ const path = require('path');
 const app = express();
 const server = http.createServer(app);
 
-// Configure CORS based on environment
-const corsOptions = {
-  origin: [
-    'https://spydock.vercel.app',
-    'https://spydock.onrender.com',
-    'http://localhost:3000'
-  ],
-  methods: ['GET', 'POST'],
-  credentials: true
-};
-
+// Configure CORS for production
 const io = new Server(server, {
-  cors: corsOptions,
-  path: '/socket.io/'
+  cors: {
+    origin: ['https://spydock.onrender.com', 'http://localhost:3000'],
+    methods: ['GET', 'POST']
+  }
 });
 
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(express.static(path.join(__dirname, '.')));
 
 // Serve index.html for all routes
@@ -240,13 +232,7 @@ io.on('connection', (socket) => {
   });
 });
 
-// Handle Vercel serverless function
-module.exports = app;
-
-// Start server only if not in Vercel environment
-if (process.env.VERCEL !== '1') {
-  const PORT = process.env.PORT || 3000;
-  server.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`);
-  });
-} 
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
+}); 
