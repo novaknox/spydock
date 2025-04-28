@@ -1,5 +1,10 @@
 // Game state variables
-let socket = io('http://localhost:3000');
+const isDevelopment = window.location.hostname === 'localhost';
+const socketUrl = isDevelopment ? 'http://localhost:3000' : 'https://spydock.onrender.com';
+let socket = io(socketUrl, {
+  transports: ['websocket'],
+  upgrade: false
+});
 let playerName = '';
 let gameId = '';
 let players = [];
