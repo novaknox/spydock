@@ -3,32 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SpyDock</title>
-    <link rel="icon" type="image/svg+xml" href="logo.png">
+    <title>SpyDock - A Social Deduction Game</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <div id="online-players-bar" style="display: flex; align-items: center; justify-content: center; background: #f4f6fb; color: #333; padding: 10px 0; font-weight: 500; font-size: 1.08em; border-radius: 0 0 16px 16px; margin-bottom: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); gap: 10px;">
-            <span style="display: flex; align-items: center; gap: 6px;">
-                <i class="fas fa-users" style="color: #6366f1; font-size: 1.2em;"></i>
-                <span id="online-players-count" style="background: #6366f1; color: #fff; border-radius: 999px; padding: 2px 10px; font-size: 1em; font-weight: bold; margin-right: 4px;">0</span>
-                <span style="color: #6366f1; font-weight: 600;">online</span>
+        <div id="online-players-bar">
+            <span class="online-indicator">
+                <i class="fas fa-users"></i>
+                <span id="online-players-count">0</span>
+                <span>online</span>
             </span>
-            <span id="online-players-list" style="font-weight: 600; color: #222;"></span>
+            <span id="online-players-list"></span>
         </div>
+
         <div id="welcome-screen" class="screen active">
-            <div class="logo-container">
-                <img src="logo.png" alt="SpyDock Logo" class="logo">
-            </div>
-            <h1>SpyDock</h1>
-            <div class="form-group">
-                <input type="text" id="player-name" placeholder="Enter your name" required>
-                <button id="create-game-btn" class="btn">Create Game</button>
-                <div class="join-game">
-                    <input type="text" id="game-code" placeholder="Enter game code">
-                    <button id="join-game-btn" class="btn">Join Game</button>
+            <div class="welcome-content">
+                <h1>SpyDock</h1>
+                <p class="welcome-subtitle">A thrilling social deduction game where you must find the spy among you!</p>
+                <div id="returning-player-message" style="display: none; margin-bottom: 20px; padding: 10px; background-color: #4b5563; border-radius: 8px; color: white; font-weight: 500;">
+                    Welcome back, <span id="returning-player-name"></span>! Ready to play again?
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="player-name" placeholder="Enter your name" required>
+                    </div>
+                    <button id="create-game-btn" class="btn">
+                        <i class="fas fa-plus"></i>
+                        Create Game
+                    </button>
+                    <div class="join-game">
+                        <div class="input-group">
+                            <i class="fas fa-gamepad"></i>
+                            <input type="text" id="game-code" placeholder="Enter game code">
+                        </div>
+                        <button id="join-game-btn" class="btn">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Join Game
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -36,8 +54,13 @@
         <div id="lobby-screen" class="screen">
             <h2>Game Lobby</h2>
             <div class="game-info">
-                <p>Game Code: <span id="game-code-display">XXXX</span></p>
-                <button id="copy-code-btn" class="btn-small"><i class="fas fa-copy"></i></button>
+                <div class="game-code-container">
+                    <p>Game Code:</p>
+                    <span id="game-code-display">XXXX</span>
+                    <button id="copy-code-btn" class="btn-small" title="Copy game code">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
             </div>
             <div class="players-list">
                 <h3>Players</h3>
@@ -46,73 +69,145 @@
             <div class="game-settings">
                 <h3>Game Settings</h3>
                 <div class="setting">
-                    <label for="spy-count">Number of Spies:</label>
+                    <label for="spy-count">
+                        <i class="fas fa-user-secret"></i>
+                        Number of Spies
+                    </label>
                     <select id="spy-count">
                         <option value="1">1</option>
                         <option value="2">2</option>
                     </select>
                 </div>
                 <div class="setting">
-                    <label for="discussion-time">Discussion Time (minutes):</label>
+                    <label for="discussion-time">
+                        <i class="fas fa-clock"></i>
+                        Discussion Time
+                    </label>
                     <select id="discussion-time">
                         <option value="none" selected>None</option>
-                        <option value="1">1</option>
-                        <option value="3">3</option>
-                        <option value="5">5</option>
-                        <option value="10">10</option>
+                        <option value="1">1 minute</option>
+                        <option value="3">3 minutes</option>
+                        <option value="5">5 minutes</option>
+                        <option value="10">10 minutes</option>
                     </select>
                 </div>
             </div>
-            <button id="start-game-btn" class="btn">Start Game</button>
+            <button id="start-game-btn" class="btn">
+                <i class="fas fa-play"></i>
+                Start Game
+            </button>
         </div>
 
         <div id="role-screen" class="screen">
             <h2>Your Role</h2>
             <div class="role-card">
+                <div class="role-icon">
+                    <i id="role-icon" class="fas fa-user"></i>
+                </div>
                 <p>You are a <span id="role-type">Regular Player</span></p>
-                <p>The word is: <span id="word-display">?????</span></p>
+                <p class="word-display">The word is: <span id="word-display">?????</span></p>
             </div>
-            <p class="role-instruction">Remember your word! If you're a regular player, discuss with others to find the spy. If you're the spy, try to blend in without revealing that you don't know the exact word.</p>
-            <button id="ready-btn" class="btn">I'm Ready</button>
+            <p class="role-instruction">
+                <i class="fas fa-info-circle"></i>
+                Remember your word! If you're a regular player, discuss with others to find the spy. 
+                If you're the spy, try to blend in without revealing that you don't know the exact word.
+            </p>
+            <button id="ready-btn" class="btn">
+                <i class="fas fa-check"></i>
+                I'm Ready
+            </button>
         </div>
 
         <div id="game-screen" class="screen">
             <div class="game-header">
                 <h2>Discussion Time</h2>
-                <div class="timer" id="game-timer">05:00</div>
+                <div class="timer" id="game-timer">
+                    <i class="fas fa-clock"></i>
+                    <span>05:00</span>
+                </div>
+            </div>
+            <div class="players-worlds">
+                
+                <div id="players-worlds-list" class="players-worlds-list"></div>
             </div>
             <div class="chat-container">
                 <div id="chat-messages" class="chat-messages"></div>
                 <div class="chat-input">
                     <input type="text" id="message-input" placeholder="Type your message...">
-                    <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
+                    <button id="send-btn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
                 </div>
             </div>
         </div>
 
         <div id="voting-screen" class="screen">
-            <h2>Vote for the Spy</h2>
-            <p>Select who you think is the spy:</p>
+            <p class="voting-instruction">Select who you think is the spy:</p>
+            <div id="voting-status-bar" class="voting-status-bar"></div>
             <div id="voting-options" class="voting-options"></div>
-            <button id="submit-vote-btn" class="btn">Submit Vote</button>
+            <button id="submit-vote-btn" class="btn">
+                <i class="fas fa-vote-yea"></i>
+                Submit Vote
+            </button>
         </div>
 
         <div id="results-screen" class="screen">
             <h2>Game Results</h2>
             <div id="results-content"></div>
             <div class="word-reveal">
+                <i class="fas fa-lightbulb"></i>
                 <p>The word was: <span id="final-word"></span></p>
             </div>
             <div class="spy-reveal">
+                <i class="fas fa-user-secret"></i>
                 <p>The spy was: <span id="spy-name"></span></p>
             </div>
-            <button id="play-again-btn" class="btn">Play Again</button>
+            <button id="play-again-btn" class="btn">
+                <i class="fas fa-redo"></i>
+                Play Again
+            </button>
         </div>
     </div>
 
-    <footer style="position:fixed; bottom:18px; right:24px; color:#fff; font-size:1em; letter-spacing:0.5px; z-index:1000; background:rgba(0,0,0,0.12); padding:6px 16px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
-        Created by Nova
-    </footer>
+    <div class="crafted-by">
+        <div class="crafted-by-content">
+            <div class="crafted-by-text">
+                <span>Crafted with</span>
+                <i class="fas fa-heart"></i>
+                <span>by</span>
+                <span class="crafted-by-name">Nova</span>
+            </div>
+            <div class="crafted-by-social">
+                <a href="#" class="social-icon" title="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="#" class="social-icon" title="Twitter">
+                    <i class="fab fa-twitter"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification-container"></div>
+    <div class="version-info">
+        <span class="version-number">v1.6</span>
+        <span class="version-badge alpha">Alpha</span>
+    </div>
+
+    <div class="mobile-footer">
+        <div class="mobile-footer-content">
+            <div class="mobile-footer-version">
+                <span class="version-number">v1.6</span>
+                <span class="version-badge alpha">Alpha</span>
+            </div>
+            <div class="mobile-footer-crafted">
+                <span>Crafted with</span>
+                <i class="fas fa-heart"></i>
+                <span>by</span>
+                <span>Nova</span>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script src="app.js"></script>
