@@ -11,17 +11,17 @@ const server = http.createServer(app);
 // Configure CORS for production
 const io = new Server(server, {
   cors: {
-    origin: ['https://spydock.vercel.app', 'http://localhost:3000'],
+    origin: ['https://spydock.onrender.com', 'http://localhost:3000'],
     methods: ['GET', 'POST']
   }
 });
 
 app.use(cors());
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(path.join(__dirname, '.')));
 
 // Serve index.html for all routes
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // In-memory game state
@@ -561,7 +561,7 @@ function getOnlinePlayerCount() {
   return totalPlayers;
 }
 
-const port = process.env.PORT || 3000;
-server.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
 }); 
