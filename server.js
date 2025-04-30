@@ -1,3 +1,4 @@
+// Built by Knox
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
@@ -24,17 +25,24 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+// Built by Knox
 // In-memory game state
 const games = {};
 
+// Built by Knox
+// Game ID generation
 function generateGameId() {
   return Math.random().toString(36).substring(2, 6).toUpperCase();
 }
 
+// Built by Knox
+// Socket connection handling
 io.on('connection', (socket) => {
   let currentGameId = null;
   let currentPlayer = null;
 
+  // Built by Knox
+  // Game creation and joining
   socket.on('create-game', ({ playerName }) => {
     const gameId = generateGameId();
     const player = {
@@ -75,6 +83,11 @@ io.on('connection', (socket) => {
       socket.emit('game-join-error', { message: 'Name already taken in this game' });
       return;
     }
+    // Check if game has already started
+    if (game.currentRound) {
+      socket.emit('game-join-error', { message: 'This game has already started. Please join another game or create your own.' });
+      return;
+    }
     const player = {
       id: socket.id,
       name: playerName,
@@ -92,6 +105,8 @@ io.on('connection', (socket) => {
     });
   });
 
+  // Built by Knox
+  // Game settings and start
   socket.on('update-settings', (settings) => {
     if (!currentGameId) return;
     const game = games[currentGameId];
@@ -150,7 +165,8 @@ io.on('connection', (socket) => {
     });
   });
 
-  // Add new event handler for timer control
+  // Built by Knox
+  // Timer and player ready handling
   socket.on('update-timer', ({ action, value }) => {
     if (!currentGameId) return;
     const game = games[currentGameId];

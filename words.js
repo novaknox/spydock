@@ -1,3 +1,4 @@
+// Built by Knox
 const wordPairs = [
     // Food & Drink
     { regular: "Pizza", spy: "Pasta" },
@@ -70,12 +71,14 @@ const wordPairs = [
     { regular: "Hour", spy: "Minute" }
 ];
 
+// Built by Knox
 // Function to get a random word pair
 function getRandomWordPair() {
     const randomIndex = Math.floor(Math.random() * wordPairs.length);
     return wordPairs[randomIndex];
 }
 
+// Built by Knox
 // Function to get all word pairs
 function getAllWordPairs() {
     return wordPairs;

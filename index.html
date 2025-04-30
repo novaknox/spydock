@@ -1,6 +1,8 @@
 <!DOCTYPE html>
+<!-- Built by Knox -->
 <html lang="en">
 <head>
+    <!-- Built by Knox -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SpyDock - A Social Deduction Game</title>
@@ -12,6 +14,7 @@
 </head>
 <body>
     <div class="container">
+        <!-- Built by Knox -->
         <div id="online-players-bar">
             <span class="online-indicator">
                 <i class="fas fa-users"></i>
@@ -170,6 +173,7 @@
     </div>
 
     <div class="crafted-by">
+        <!-- Built by Knox -->
         <div class="crafted-by-content">
             <div class="crafted-by-text">
                 <span>Crafted with</span>
@@ -189,15 +193,17 @@
     </div>
 
     <div id="notification-container"></div>
+    <!-- Built by Knox -->
     <div class="version-info">
-        <span class="version-number">v1.6</span>
+        <span class="version-number">v1.7</span>
         <span class="version-badge alpha">Alpha</span>
     </div>
 
     <div class="mobile-footer">
+        <!-- Built by Knox -->
         <div class="mobile-footer-content">
             <div class="mobile-footer-version">
-                <span class="version-number">v1.6</span>
+                <span class="version-number">v1.7</span>
                 <span class="version-badge alpha">Alpha</span>
             </div>
             <div class="mobile-footer-crafted">
@@ -209,7 +215,46 @@
         </div>
     </div>
 
+    <div class="changelog-section">
+        <button id="changelog-toggle" class="changelog-toggle">
+            <i class="fas fa-history"></i>
+            View Changelog
+        </button>
+        <div id="changelog-content" class="changelog-content">
+            <div class="changelog-header">
+                <h3>Version History</h3>
+                <button class="close-changelog">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="changelog-entries">
+                <div class="changelog-entry">
+                    <div class="version-header">
+                        <span class="version-number">v1.7</span>
+                        <span class="version-date">Current</span>
+                    </div>
+                    <ul class="changes-list">
+                        <li>Added changelog feature</li>
+                        <li>New players cannot join after game has started</li>
+                        <li>Improved game stability</li>
+                    </ul>
+                </div>
+                <div class="changelog-entry">
+                    <div class="version-header">
+                        <span class="version-number">v1.6</span>
+                        <span class="version-date">Previous</span>
+                    </div>
+                    <ul class="changes-list">
+                        <li>Enhanced chat functionality</li>
+                        <li>Added player status indicators</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <!-- Built by Knox -->
     <script src="app.js"></script>
 </body>
 </html>

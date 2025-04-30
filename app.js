@@ -1,3 +1,4 @@
+// Built by Knox
 // Game state variables
 const isDevelopment = window.location.hostname === 'localhost';
 const socketUrl = isDevelopment ? 'http://localhost:3000' : 'https://spydock.onrender.com';
@@ -20,6 +21,7 @@ let votedPlayers = new Set();
 let isKicked = false;
 let games = {};
 
+// Built by Knox
 // DOM Elements
 const welcomeScreen = document.getElementById('welcome-screen');
 const lobbyScreen = document.getElementById('lobby-screen');
@@ -55,6 +57,7 @@ const onlinePlayersBar = document.getElementById('online-players-bar');
 const onlinePlayersCount = document.getElementById('online-players-count');
 const onlinePlayersList = document.getElementById('online-players-list');
 
+// Built by Knox
 // Add a ready players bar to the role screen
 const readyPlayersBar = document.createElement('div');
 readyPlayersBar.id = 'ready-players-bar';
@@ -329,7 +332,8 @@ function updateVotingStatusBar(totalPlayersCount) {
     votingStatusBar.appendChild(playersContainer);
 }
 
-// Initialize the game
+// Built by Knox
+// Game Initialization
 function initGame() {
     // Set up event listeners
     setupEventListeners();
@@ -344,6 +348,7 @@ function initGame() {
     loadPlayerName();
 }
 
+// Built by Knox
 // Load stored player name from localStorage
 function loadPlayerName() {
     const storedName = localStorage.getItem('playerName');
@@ -367,6 +372,7 @@ function loadPlayerName() {
     }
 }
 
+// Built by Knox
 // Store player name in localStorage
 function storePlayerName() {
     if (playerName) {
@@ -374,6 +380,7 @@ function storePlayerName() {
     }
 }
 
+// Built by Knox
 // Set up UI event listeners
 function setupEventListeners() {
     // Welcome screen
@@ -402,6 +409,7 @@ function setupEventListeners() {
     playAgainBtn.addEventListener('click', playAgain);
 }
 
+// Built by Knox
 // Set up socket event handlers
 function setupSocketHandlers() {
     socket.on('game-created', handleGameCreated);
@@ -579,7 +587,8 @@ function setupSocketHandlers() {
     });
 }
 
-// Event handler functions
+// Built by Knox
+// Game Logic Functions
 function createGame() {
     playerName = playerNameInput.value.trim();
     
@@ -1727,3 +1736,25 @@ function disableVotingUI() {
 
 // Initialize the game when the page loads
 window.addEventListener('load', initGame);
+
+// Changelog functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const changelogToggle = document.getElementById('changelog-toggle');
+    const changelogContent = document.getElementById('changelog-content');
+    const closeChangelog = document.querySelector('.close-changelog');
+
+    changelogToggle.addEventListener('click', function() {
+        changelogContent.classList.toggle('active');
+    });
+
+    closeChangelog.addEventListener('click', function() {
+        changelogContent.classList.remove('active');
+    });
+
+    // Close changelog when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!changelogContent.contains(event.target) && !changelogToggle.contains(event.target)) {
+            changelogContent.classList.remove('active');
+        }
+    });
+});

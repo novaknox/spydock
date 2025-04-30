@@ -1,3 +1,4 @@
+/* Built by Knox */
 /* Global Styles */
 * {
     margin: 0;
@@ -41,6 +42,7 @@ body {
     margin: 0 auto 50px;
 }
 
+/* Built by Knox */
 /* Online Players Bar */
 #online-players-bar {
     display: flex;
@@ -77,6 +79,7 @@ body {
     font-weight: bold;
 }
 
+/* Built by Knox */
 /* Screen Styles */
 .screen {
     display: none;
@@ -88,6 +91,7 @@ body {
     display: block;
 }
 
+/* Built by Knox */
 /* Welcome Screen */
 .welcome-content {
     text-align: center;
@@ -102,6 +106,7 @@ body {
     line-height: 1.6;
 }
 
+/* Built by Knox */
 /* Form Elements */
 .form-group {
     display: flex;
@@ -138,6 +143,7 @@ input, select {
     width: 100%;
 }
 
+/* Built by Knox */
 /* Buttons */
 .btn, .btn-small {
     display: flex;
@@ -160,6 +166,7 @@ input, select {
     font-size: 1.1rem;
 }
 
+/* Built by Knox */
 /* Join Game Section */
 .join-game {
     display: flex;
@@ -2042,4 +2049,160 @@ input, select {
 /* Make active players more prominent */
 .active-players-label i {
     color: #10b981;
+}
+
+/* Changelog Styles */
+.changelog-section {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    z-index: 1000;
+    display: none; /* Hide by default */
+}
+
+/* Show changelog only on desktop screens */
+@media (min-width: 769px) {
+    .changelog-section {
+        display: block;
+    }
+}
+
+.changelog-toggle {
+    background-color: #4b5563;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.changelog-toggle:hover {
+    background-color: #374151;
+}
+
+.changelog-content {
+    display: none;
+    position: fixed;
+    bottom: 140px;
+    right: 20px;
+    width: 350px;
+    max-height: 500px;
+    background-color: #1f2937;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.changelog-content.active {
+    display: block;
+}
+
+.changelog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #374151;
+    border-bottom: 1px solid #4b5563;
+}
+
+.changelog-header h3 {
+    margin: 0;
+    color: white;
+    font-size: 18px;
+}
+
+.close-changelog {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 5px;
+    font-size: 16px;
+    transition: color 0.2s;
+}
+
+.close-changelog:hover {
+    color: white;
+}
+
+.changelog-entries {
+    padding: 15px;
+    overflow-y: auto;
+    max-height: calc(500px - 60px);
+}
+
+.changelog-entry {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #374151;
+}
+
+.changelog-entry:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.version-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.version-number {
+    font-weight: 600;
+    color: #60a5fa;
+}
+
+.version-date {
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+.changes-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.changes-list li {
+    color: #e5e7eb;
+    margin-bottom: 8px;
+    padding-left: 20px;
+    position: relative;
+    font-size: 14px;
+}
+
+.changes-list li:before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #60a5fa;
+}
+
+@media (max-width: 768px) {
+    .changelog-content {
+        width: calc(100% - 40px);
+        bottom: 130px;
+    }
+    
+    .changelog-toggle {
+        padding: 8px 12px;
+        font-size: 13px;
+        bottom: 70px;
+    }
+}
+
+/* Remove mobile-specific changelog styles since it will be hidden on mobile */
+@media (max-width: 768px) {
+    .changelog-section {
+        display: none !important; /* Force hide on mobile */
+    }
 }
