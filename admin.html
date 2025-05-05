@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpyDock Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Login Screen -->
+        <div id="login-screen" class="screen active">
+            <div class="login-form">
+                <div class="login-header">
+                    <div class="logo-container">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h1>Admin Login</h1>
+                    <p class="login-subtitle">Secure access to SpyDock administration</p>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="username" placeholder="Username" autocomplete="username">
+                        <div class="input-focus-border"></div>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" placeholder="Password" autocomplete="current-password">
+                        <div class="input-focus-border"></div>
+                        <button class="toggle-password" type="button" aria-label="Toggle password visibility">
+                            <span class="toggle-text">Show</span>
+                        </button>
+                    </div>
+                    <div class="remember-me">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="remember-me">
+                            <span class="checkmark"></span>
+                            Remember me
+                        </label>
+                    </div>
+                    <button id="login-btn" class="btn">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Login</span>
+                        <div class="btn-loader"></div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Screen -->
+        <div id="dashboard-screen" class="screen">
+            <div class="dashboard-header">
+                <h1>Admin Dashboard</h1>
+                <div class="header-buttons">
+                    <button id="settings-btn" class="btn-small">
+                        <i class="fas fa-cog"></i>
+                        Settings
+                    </button>
+                    <button id="logout-btn" class="btn-small">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </button>
+                </div>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Active Players</h3>
+                        <p id="active-players-count">0</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Active Games</h3>
+                        <p id="active-games-count">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="active-games-section">
+                <h2>Active Games</h2>
+                <div class="games-list" id="active-games-list">
+                    <!-- Games will be populated here dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Admin Settings</h2>
+                <button id="close-settings-btn" class="close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="settings-form">
+                <div class="form-group">
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="new-username" placeholder="New Username">
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="new-password" placeholder="New Password">
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="confirm-password" placeholder="Confirm New Password">
+                    </div>
+                    <button id="save-settings-btn" class="btn">
+                        <i class="fas fa-save"></i>
+                        Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <div id="notification-container" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999;"></div>
+    <script>
+        // Initialize socket connection
+        const socket = io();
+
+        // Admin credentials
+        let ADMIN_USERNAME = localStorage.getItem('adminUsername') || 'admin';
+        let ADMIN_PASSWORD = localStorage.getItem('adminPassword') || 'admin123';
+
+        // DOM Elements
+        const loginScreen = document.getElementById('login-screen');
+        const dashboardScreen = document.getElementById('dashboard-screen');
+        const loginBtn = document.getElementById('login-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const rememberMeCheckbox = document.getElementById('remember-me');
+        const togglePasswordBtn = document.querySelector('.toggle-password');
+        const settingsBtn = document.getElementById('settings-btn');
+        const settingsModal = document.getElementById('settings-modal');
+        const closeSettingsBtn = document.getElementById('close-settings-btn');
+        const newUsernameInput = document.getElementById('new-username');
+        const newPasswordInput = document.getElementById('new-password');
+        const confirmPasswordInput = document.getElementById('confirm-password');
+        const saveSettingsBtn = document.getElementById('save-settings-btn');
+
+        // Function to update admin credentials
+        function updateAdminCredentials(username, password) {
+            ADMIN_USERNAME = username;
+            ADMIN_PASSWORD = password;
+            localStorage.setItem('adminUsername', username);
+            localStorage.setItem('adminPassword', password);
+        }
+
+        // Check for saved credentials
+        const savedUsername = localStorage.getItem('adminUsername');
+        const savedPassword = localStorage.getItem('adminPassword');
+        if (savedUsername && savedPassword) {
+            updateAdminCredentials(savedUsername, savedPassword);
+            usernameInput.value = savedUsername;
+            passwordInput.value = savedPassword;
+            rememberMeCheckbox.checked = true;
+        }
+
+        // Toggle password visibility
+        togglePasswordBtn.addEventListener('click', () => {
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+            const text = togglePasswordBtn.querySelector('.toggle-text');
+            text.textContent = type === 'password' ? 'Show' : 'Hide';
+        });
+
+        // Login handler with loading state
+        loginBtn.addEventListener('click', () => {
+            const username = usernameInput.value;
+            const password = passwordInput.value;
+
+            // Add loading state
+            loginBtn.classList.add('loading');
+            loginBtn.disabled = true;
+
+            // Simulate network delay
+            setTimeout(() => {
+                if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                    // Save credentials if remember me is checked
+                    if (rememberMeCheckbox.checked) {
+                        updateAdminCredentials(username, password);
+                    } else {
+                        localStorage.removeItem('adminUsername');
+                        localStorage.removeItem('adminPassword');
+                    }
+
+                    loginScreen.classList.remove('active');
+                    dashboardScreen.classList.add('active');
+                    // Notify server of admin login
+                    socket.emit('admin:login');
+                    // Request initial data
+                    socket.emit('admin:requestStats');
+                    showNotification('Successfully logged in', 'success');
+                } else {
+                    showNotification('Invalid credentials', 'error');
+                    // Add shake animation to form
+                    loginScreen.querySelector('.login-form').classList.add('shake');
+                    setTimeout(() => {
+                        loginScreen.querySelector('.login-form').classList.remove('shake');
+                    }, 500);
+                }
+
+                // Remove loading state
+                loginBtn.classList.remove('loading');
+                loginBtn.disabled = false;
+            }, 1000);
+        });
+
+        // Settings button handler
+        settingsBtn.addEventListener('click', () => {
+            settingsModal.style.display = 'flex';
+        });
+
+        // Close settings modal handler
+        closeSettingsBtn.addEventListener('click', () => {
+            settingsModal.style.display = 'none';
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (event) => {
+            if (event.target === settingsModal) {
+                settingsModal.style.display = 'none';
+            }
+        });
+
+        // Logout handler
+        logoutBtn.addEventListener('click', () => {
+            dashboardScreen.classList.remove('active');
+            loginScreen.classList.add('active');
+            usernameInput.value = '';
+            passwordInput.value = '';
+            // Reset login button state
+            loginBtn.classList.remove('loading');
+            loginBtn.disabled = false;
+            // Notify server of admin logout
+            socket.emit('admin:logout');
+            // Show logout notification
+            showNotification('Successfully logged out', 'info');
+        });
+
+        // Save settings handler
+        saveSettingsBtn.addEventListener('click', () => {
+            const newUsername = newUsernameInput.value.trim();
+            const newPassword = newPasswordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+
+            if (!newUsername && !newPassword) {
+                showNotification('Please enter at least one field to update', 'error');
+                return;
+            }
+
+            if (newPassword && newPassword !== confirmPassword) {
+                showNotification('Passwords do not match', 'error');
+                return;
+            }
+
+            let credentialsChanged = false;
+
+            if (newUsername) {
+                updateAdminCredentials(newUsername, newPassword || ADMIN_PASSWORD);
+                credentialsChanged = true;
+                showNotification('Username updated successfully', 'success');
+            }
+            if (newPassword) {
+                updateAdminCredentials(newUsername || ADMIN_USERNAME, newPassword);
+                credentialsChanged = true;
+                showNotification('Password updated successfully', 'success');
+            }
+
+            // Clear the form
+            newUsernameInput.value = '';
+            newPasswordInput.value = '';
+            confirmPasswordInput.value = '';
+
+            // Hide settings modal
+            settingsModal.style.display = 'none';
+
+            // If credentials were changed, redirect to login page
+            if (credentialsChanged) {
+                // Switch to login screen
+                dashboardScreen.classList.remove('active');
+                loginScreen.classList.add('active');
+                
+                // Clear login form
+                usernameInput.value = '';
+                passwordInput.value = '';
+                rememberMeCheckbox.checked = false;
+                
+                // Reset login button state
+                loginBtn.classList.remove('loading');
+                loginBtn.disabled = false;
+                
+                // Show notification about new credentials
+                setTimeout(() => {
+                    showNotification('Please login with your new credentials', 'info');
+                }, 500);
+            }
+        });
+
+        // Socket event handlers
+        socket.on('admin:stats', (data) => {
+            document.getElementById('active-players-count').textContent = data.activePlayers;
+            document.getElementById('active-games-count').textContent = data.activeGames;
+            
+            // Update games list
+            const gamesList = document.getElementById('active-games-list');
+            gamesList.innerHTML = '';
+            
+            data.games.forEach(game => {
+                const gameElement = document.createElement('div');
+                gameElement.className = 'game-card';
+                gameElement.innerHTML = `
+                    <div class="game-info">
+                        <h3>Game #${game.id}</h3>
+                        <p>Players: ${game.players.length}</p>
+                        <p>Status: ${game.status}</p>
+                    </div>
+                `;
+                gamesList.appendChild(gameElement);
+            });
+        });
+
+        // Request stats update every 5 seconds
+        setInterval(() => {
+            if (dashboardScreen.classList.contains('active')) {
+                socket.emit('admin:requestStats');
+            }
+        }, 5000);
+
+        // Request initial stats when dashboard becomes active
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.target === dashboardScreen && 
+                    mutation.attributeName === 'class' && 
+                    dashboardScreen.classList.contains('active')) {
+                    socket.emit('admin:requestStats');
+                }
+            });
+        });
+
+        observer.observe(dashboardScreen, { attributes: true });
+
+        // Function to show in-app notifications
+        function showNotification(message, type = 'info') {
+            // Clear any existing notification timeouts
+            if (window.notificationTimeout) {
+                clearTimeout(window.notificationTimeout);
+            }
+            
+            // Remove any existing notifications
+            const existingNotification = document.querySelector('.modern-notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+            
+            // Create new notification element
+            const notification = document.createElement('div');
+            notification.className = `modern-notification ${type}-notification`;
+            
+            let icon = 'info-circle';
+            if (type === 'error') icon = 'exclamation-circle';
+            if (type === 'success') icon = 'check-circle';
+            if (type === 'warning') icon = 'exclamation-triangle';
+            
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <div class="notification-icon">
+                        <i class="fas fa-${icon}"></i>
+                    </div>
+                    <div class="notification-text">${message}</div>
+                </div>
+            `;
+            
+            // Add to the notification container
+            const container = document.getElementById('notification-container');
+            container.appendChild(notification);
+            
+            // Show notification with animation
+            requestAnimationFrame(() => {
+                notification.classList.add('show');
+            });
+            
+            // Hide notification after a delay
+            window.notificationTimeout = setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html> 

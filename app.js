@@ -52,10 +52,10 @@ const submitVoteBtn = document.getElementById('submit-vote-btn');
 const resultsContent = document.getElementById('results-content');
 const finalWordDisplay = document.getElementById('final-word');
 const spyNameDisplay = document.getElementById('spy-name');
-const playAgainBtn = document.getElementById('play-again-btn');
 const onlinePlayersBar = document.getElementById('online-players-bar');
 const onlinePlayersCount = document.getElementById('online-players-count');
 const onlinePlayersList = document.getElementById('online-players-list');
+const playAgainBtn = document.getElementById('play-again-btn');
 
 // Built by Knox
 // Add a ready players bar to the role screen
@@ -404,9 +404,9 @@ function setupEventListeners() {
     
     // Voting screen
     submitVoteBtn.addEventListener('click', submitVote);
-    
+
     // Results screen
-    playAgainBtn.addEventListener('click', playAgain);
+    playAgainBtn.addEventListener('click', handlePlayAgain);
 }
 
 // Built by Knox
@@ -853,19 +853,23 @@ function playerReady() {
         const cancelReadyBtn = document.createElement('button');
         cancelReadyBtn.id = 'cancel-ready-btn';
         cancelReadyBtn.className = 'btn cancel-ready';
-        cancelReadyBtn.innerHTML = '<i class="fas fa-times-circle"></i> Cancel';
+        cancelReadyBtn.innerHTML = '<i class="fas fa-times"></i> Not Ready';
         cancelReadyBtn.style.marginLeft = '12px';
-        cancelReadyBtn.style.backgroundColor = '#fee2e2';
-        cancelReadyBtn.style.color = '#ef4444';
-        cancelReadyBtn.style.border = '1px solid #fecaca';
-        cancelReadyBtn.style.padding = '14px 24px';
-        cancelReadyBtn.style.display = 'inline-flex';
-        cancelReadyBtn.style.alignItems = 'center';
-        cancelReadyBtn.style.justifyContent = 'center';
-        cancelReadyBtn.style.gap = '8px';
+        
+        // Create a container for the buttons to ensure proper alignment
+        const buttonContainer = document.createElement('div');
+        buttonContainer.style.display = 'flex';
+        buttonContainer.style.alignItems = 'center';
+        buttonContainer.style.justifyContent = 'center';
+        buttonContainer.style.gap = '12px';
+        buttonContainer.style.marginTop = '20px';
+        
+        // Move the ready button into the container
+        readyBtn.parentNode.insertBefore(buttonContainer, readyBtn);
+        buttonContainer.appendChild(readyBtn);
+        buttonContainer.appendChild(cancelReadyBtn);
         
         cancelReadyBtn.addEventListener('click', playerNotReady);
-        readyBtn.parentNode.appendChild(cancelReadyBtn);
     }
     
     // Check if we're in the second round and need to display kicked player info
@@ -882,12 +886,6 @@ function playerNotReady() {
     readyBtn.disabled = false;
     readyBtn.classList.remove('ready-clicked');
     readyBtn.innerHTML = 'I am ready';
-    
-    // Remove the cancel button
-    const cancelReadyBtn = document.getElementById('cancel-ready-btn');
-    if (cancelReadyBtn) {
-        cancelReadyBtn.remove();
-    }
     
     socket.emit('player-not-ready', { playerId: currentPlayer.id, name: playerName });
 }
@@ -1350,24 +1348,6 @@ function handleVotingResults(data) {
                 readyBtn.classList.remove('ready-clicked');
                 readyBtn.innerHTML = '<i class="fas fa-check"></i> I\'m Ready';
                 
-                // Remove the cancel button if it exists
-                const cancelReadyBtn = document.getElementById('cancel-ready-btn');
-                if (cancelReadyBtn) {
-                    cancelReadyBtn.remove();
-                }
-                
-                // Update the round indicator if it exists
-                const roundNumber = document.querySelector('.round-number');
-                if (roundNumber) {
-                    roundNumber.innerHTML = `<p>Round ${data.roundNumber || 2} of 2</p>`;
-                } else {
-                    // Create round indicator if it doesn't exist
-                    const newRoundNumber = document.createElement('div');
-                    newRoundNumber.className = 'round-number';
-                    newRoundNumber.innerHTML = `<p>Round ${data.roundNumber || 2} of 2</p>`;
-                    document.querySelector('.role-info').appendChild(newRoundNumber);
-                }
-                
                 // Add kicked player indicator for all players during the second round
                 if (data.kickedPlayerName) {
                     const kickedPlayersInfo = document.createElement('div');
@@ -1402,23 +1382,20 @@ function handleVotingResults(data) {
     }
 }
 
-function playAgain() {
-    // Store player name before resetting
-    storePlayerName();
-    // Redirect to welcome screen instead of lobby
-    socket.emit('play-again');
-}
-
 function handleGameReset(data) {
-    // Reset game state while preserving only the player's name
+    // Reset game state while preserving only the player's name and host status
     gameId = '';
     selectedVote = null;
     votedPlayers.clear();
-    isHost = false;
     playerRole = '';
     gameWord = '';
     isKicked = false; // Reset kicked status
     readyPlayerIds = []; // Reset ready players list
+    
+    // Check if player was previously a host
+    const wasHost = localStorage.getItem('wasHost') === 'true';
+    isHost = wasHost;
+    localStorage.removeItem('wasHost'); // Clear the stored host status
     
     // Reset players array with only name and id
     if (data.players) {
@@ -1450,12 +1427,6 @@ function handleGameReset(data) {
         readyBtn.innerHTML = '<i class="fas fa-check"></i> I\'m Ready';
     }
     
-    // Remove cancel ready button if it exists
-    const cancelReadyBtn = document.getElementById('cancel-ready-btn');
-    if (cancelReadyBtn) {
-        cancelReadyBtn.remove();
-    }
-    
     // Reset voting options
     if (votingOptions) {
         votingOptions.innerHTML = '';
@@ -1482,18 +1453,46 @@ function handleGameReset(data) {
     // Show welcome screen instead of lobby screen
     showScreen(welcomeScreen);
     
-    // Notify the user that a new game is starting
-    showNotification('Starting a new game with your name preserved', 'info');
-    
-    // Update ready players bar
-    updateReadyPlayersBar();
+    // If player was previously a host, automatically create a new game
+    if (wasHost) {
+        createGame();
+    } else {
+        // Notify the user that a new game is starting
+        showNotification('Starting a new game with your name preserved', 'info');
+    }
 }
 
 function handlePlayerLeft(data) {
-    if (data && data.name) {
-        showNotification(`${data.name} has left the game.`, 'warning');
+    // Update the players array with the new list from the server
+    if (data && data.players) {
+        players = data.players;
     }
-    // The game continues for remaining players, just update the list
+    
+    // Show notification about player leaving with standard notification style
+    if (data && data.disconnectedPlayerName) {
+        showNotification(`${data.disconnectedPlayerName} has left the game.`, 'info');
+    }
+    
+    // If the player who left was the spy, show a special notification with standard style
+    if (data && data.wasSpy) {
+        showNotification('The spy has left the game!', 'info');
+        
+        // Redirect to welcome screen after a short delay
+        setTimeout(() => {
+            showScreen(welcomeScreen);
+            showNotification('Game ended because the spy left. You can start a new game!', 'info');
+        }, 3000);
+    }
+    
+    // Store disconnected players in the game state if provided
+    if (data && data.disconnectedPlayers && currentGameId) {
+        if (!games[currentGameId]) {
+            games[currentGameId] = {};
+        }
+        games[currentGameId].disconnectedPlayers = data.disconnectedPlayers;
+    }
+    
+    // Update the players list in the UI
     updatePlayersList();
 }
 
@@ -1578,18 +1577,36 @@ function showNotification(message, type = 'info') {
     
     // Add to the notification container
     const container = document.getElementById('notification-container');
-    container.appendChild(notification);
+    if (!container) {
+        // Create notification container if it doesn't exist
+        const newContainer = document.createElement('div');
+        newContainer.id = 'notification-container';
+        newContainer.style.position = 'fixed';
+        newContainer.style.top = '20px';
+        newContainer.style.left = '50%';
+        newContainer.style.transform = 'translateX(-50%)';
+        newContainer.style.zIndex = '9999';
+        document.body.appendChild(newContainer);
+        newContainer.appendChild(notification);
+    } else {
+        container.appendChild(notification);
+    }
+    
+    // Force a reflow to ensure the animation works
+    notification.offsetHeight;
     
     // Show notification with animation
-    setTimeout(() => {
+    requestAnimationFrame(() => {
         notification.classList.add('show');
-    }, 10);
+    });
     
     // Hide notification after a delay
     window.notificationTimeout = setTimeout(() => {
         notification.classList.remove('show');
         setTimeout(() => {
-            notification.remove();
+            if (notification.parentNode) {
+                notification.remove();
+            }
         }, 300);
     }, 3000);
 }
@@ -1734,6 +1751,18 @@ function disableVotingUI() {
     }
 }
 
+function handlePlayAgain() {
+    // If player was the host, create a new game
+    if (isHost) {
+        createGame();
+    } else {
+        // For non-host players, show the welcome screen with their name preserved
+        showScreen(welcomeScreen);
+        playerNameInput.value = playerName;
+        showNotification('Ready to join a new game!', 'info');
+    }
+}
+
 // Initialize the game when the page loads
 window.addEventListener('load', initGame);
 
@@ -1742,19 +1771,33 @@ document.addEventListener('DOMContentLoaded', function() {
     const changelogToggle = document.getElementById('changelog-toggle');
     const changelogContent = document.getElementById('changelog-content');
     const closeChangelog = document.querySelector('.close-changelog');
+    const changelogSection = document.querySelector('.changelog-section');
+    const mobileVersion = document.querySelector('.mobile-footer-version');
 
+    // Desktop changelog toggle
     changelogToggle.addEventListener('click', function() {
         changelogContent.classList.toggle('active');
     });
 
+    // Mobile version click
+    mobileVersion.addEventListener('click', function() {
+        changelogSection.classList.add('active');
+        changelogContent.classList.add('active');
+    });
+
+    // Close changelog
     closeChangelog.addEventListener('click', function() {
         changelogContent.classList.remove('active');
+        changelogSection.classList.remove('active');
     });
 
     // Close changelog when clicking outside
     document.addEventListener('click', function(event) {
-        if (!changelogContent.contains(event.target) && !changelogToggle.contains(event.target)) {
+        if (!changelogContent.contains(event.target) && 
+            !changelogToggle.contains(event.target) && 
+            !mobileVersion.contains(event.target)) {
             changelogContent.classList.remove('active');
+            changelogSection.classList.remove('active');
         }
     });
 });
