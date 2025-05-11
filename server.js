@@ -231,6 +231,14 @@ io.on('connection', (socket) => {
     if (!currentGameId) return;
     const game = games[currentGameId];
     if (!game) return;
+
+    // Validate that the game has a valid discussion time
+    if (!game.settings.discussionTime || 
+        game.settings.discussionTime === 0 || 
+        isNaN(game.settings.discussionTime)) {
+      socket.emit('game-join-error', { message: 'Please select a discussion time before starting the game.' });
+      return;
+    }
     
     // Get a random word pair
     const wordPair = getRandomWordPair();
@@ -466,22 +474,21 @@ io.on('connection', (socket) => {
         // Initialize the round counter if it doesn't exist
         if (!game.currentRound) {
             game.currentRound = 1;
-        }
-        
-        // If the kicked player is the spy, end the game with regular players winning
-        if (isSpy) {
-            io.to(currentGameId).emit('voting-results', {
-                votedPlayer,
-                spy: game.spy,
-                spyName,
-                word: game.wordPair.regular,
-                spyWord: game.wordPair.spy,
-                isSpy,
-                kickedPlayerName: kickedPlayer?.name || '',
-                gameOver: true,
-                winner: 'regular',
-                message: 'Regular players win! You caught the spy!'
-            });
+        }            // If the kicked player is the spy, end the game with regular players winning
+            if (isSpy) {
+                game.gameEnded = true;
+                io.to(currentGameId).emit('voting-results', {
+                    votedPlayer,
+                    spy: game.spy,
+                    spyName,
+                    word: game.wordPair.regular,
+                    spyWord: game.wordPair.spy,
+                    isSpy,
+                    kickedPlayerName: kickedPlayer?.name || '',
+                    gameOver: true,
+                    winner: 'regular',
+                    message: 'Regular players win! You caught the spy!'
+                });
         } else {
             // If the kicked player is not the spy
             // Instead of removing the player, mark them as kicked but keep them in the game
@@ -507,6 +514,7 @@ io.on('connection', (socket) => {
             
             if (remainingActivePlayers.length > 0 && remainingActivePlayers.length < 3) {
                 // Not enough active players left, spies win
+                game.gameEnded = true;
                 io.to(currentGameId).emit('voting-results', {
                     votedPlayer,
                     spy: game.spy,
@@ -517,10 +525,11 @@ io.on('connection', (socket) => {
                     kickedPlayerName: kickedPlayer?.name || '',
                     gameOver: true,
                     winner: 'spy',
-                    message: 'Game over! Not enough active players left (minimum 3 required). The spy wins!'
+                    message: 'Game over! The spy wins!'
                 });
             } else if (game.currentRound === 2) {
                 // This was the second round and they still didn't catch the spy - spy wins
+                game.gameEnded = true;
                 io.to(currentGameId).emit('voting-results', {
                     votedPlayer,
                     spy: game.spy,
@@ -713,6 +722,7 @@ io.on('connection', (socket) => {
           
           // If the spy left, end the game and notify all players
           if (wasSpy && game.currentRound) {
+            game.gameEnded = true;
             io.to(currentGameId).emit('voting-results', {
               gameOver: true,
               winner: 'regular',
@@ -756,9 +766,9 @@ io.on('connection', (socket) => {
               disconnectedPlayers: game.disconnectedPlayers
             });
             
-            // If game is in progress, check for minimum players required
+            // Only check for minimum players if game is still in active rounds
             const activePlayersCount = activePlayers.filter(p => !game.kickedPlayers?.includes(p.id)).length;
-            if (game.currentRound && activePlayersCount > 0 && activePlayersCount < 3) {
+            if (game.currentRound && !game.gameEnded && activePlayersCount > 0 && activePlayersCount < 3) {
               io.to(currentGameId).emit('voting-results', {
                 gameOver: true,
                 winner: 'spy',

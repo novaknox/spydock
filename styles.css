@@ -194,6 +194,7 @@ input, select {
     gap: 12px;
     flex-wrap: wrap;
     justify-content: center;
+        text-transform: uppercase;
 }
 
 #game-code-display {
@@ -204,6 +205,8 @@ input, select {
     background: white;
     padding: 8px 16px;
     border-radius: var(--border-radius);
+    text-transform: uppercase;
+
 }
 
 /* Players List */
@@ -1114,14 +1117,15 @@ input, select {
     gap: 6px;
 }
 
-.mobile-footer-version .version-number {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
+.mobile-footer-version .version-number,
+.mobile-footer-version .version-badge {
+    cursor: pointer;
+    transition: opacity 0.2s ease;
 }
 
-.mobile-footer-version .version-badge {
-    padding: 1px 6px;
-    font-size: 0.7rem;
+.mobile-footer-version .version-number:active,
+.mobile-footer-version .version-badge:active {
+    opacity: 0.7;
 }
 
 /* Responsive Design */
@@ -1560,7 +1564,7 @@ input, select {
     backdrop-filter: blur(8px);
     padding: 8px 16px;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
+    z-index: 998;
     border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
 
@@ -2269,11 +2273,11 @@ input, select {
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
+        background: rgba(0, 0, 0, 0.8);
         z-index: 9999;
         opacity: 0;
         visibility: hidden;
-        transition: opacity 0.3s, visibility 0.3s;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
     }
 
     .changelog-section.active {
@@ -2291,10 +2295,37 @@ input, select {
         max-height: 80vh;
         bottom: auto;
         right: auto;
+        animation: modalSlideIn 0.3s ease;
     }
 
     .changelog-toggle {
         display: none;
+    }
+
+    .changelog-header {
+        padding: 12px 16px;
+    }
+
+    .changelog-entries {
+        padding: 12px;
+        max-height: calc(80vh - 60px);
+    }
+
+    .changes-list li {
+        font-size: 13px;
+        line-height: 1.5;
+        margin-bottom: 6px;
+    }
+}
+
+@keyframes modalSlideIn {
+    from { 
+        opacity: 0;
+        transform: translate(-50%, -45%);
+    }
+    to { 
+        opacity: 1;
+        transform: translate(-50%, -50%);
     }
 }
 

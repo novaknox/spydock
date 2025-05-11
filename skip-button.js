@@ -130,14 +130,19 @@ function resetSkipState() {
 
 // Add socket event listeners
 function addSkipSocketListeners() {
-    socket.on('skip-update', handleSkipUpdate);
-    socket.on('all-players-skipped', () => {
+    socket.on('skip-update', handleSkipUpdate);    socket.on('all-players-skipped', () => {
         // Show notification that discussion is being skipped
         const notification = document.createElement('div');
         notification.className = 'skip-notification all-skipped';
         notification.innerHTML = '<i class="fas fa-forward"></i> All players voted to skip! Moving to voting...';
         
         document.body.appendChild(notification);
+        
+        // Make notification invisible after 1 second
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            setTimeout(() => notification.remove(), 300); // Remove from DOM after fade out
+        }, 2000);
         
         // The server will handle ending the timer and moving to voting screen
     });

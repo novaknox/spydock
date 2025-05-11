@@ -386,6 +386,11 @@ function setupEventListeners() {
     createGameBtn.addEventListener('click', createGame);
     joinGameBtn.addEventListener('click', joinGame);
     
+    // Transform game code to uppercase while typing
+    gameCodeInput.addEventListener('input', function() {
+        this.value = this.value.toUpperCase();
+    });
+    
     // Lobby screen
     copyCodeBtn.addEventListener('click', copyGameCode);
     spyCountSelect.addEventListener('change', updateGameSettings);
@@ -617,6 +622,9 @@ function joinGame() {
         return;
     }
     
+    // Set the input value to uppercase for visual feedback
+    gameCodeInput.value = gameCode;
+    
     isHost = false;
     storePlayerName();
     socket.emit('join-game', { playerName, gameId: gameCode });
@@ -752,6 +760,12 @@ function startGame() {
     
     if (players.length < 3) {
         showNotification('You need at least 3 players to start the game', 'error');
+        return;
+    }
+
+    const discussionTime = parseInt(discussionTimeSelect.value);
+    if (discussionTime === 0 || isNaN(discussionTime) || discussionTimeSelect.value === 'none') {
+        showNotification('Please select a discussion time before starting the game', 'error');
         return;
     }
     
@@ -1260,7 +1274,12 @@ function handleVotingResults(data) {
         }
         
         // Display both words
-        finalWordDisplay.textContent = data.word;
+        finalWordDisplay.textContent = `Regular player's word was: ${data.word}`;
+        // Remove existing spy word display if it exists
+        const existingSpyWordDisplay = finalWordDisplay.parentNode.querySelector('p:not(:first-child)');
+        if (existingSpyWordDisplay) {
+            existingSpyWordDisplay.remove();
+        }
         const spyWordDisplay = document.createElement('p');
         spyWordDisplay.textContent = `The spy's word was: ${data.spyWord}`;
         spyWordDisplay.style.marginTop = '10px';
@@ -1752,68 +1771,54 @@ window.addEventListener('load', initGame);
 
 // Changelog functionality
 document.addEventListener('DOMContentLoaded', function() {
-    const mobileVersionNumber = document.querySelector('.mobile-footer .version-number');
-    const changelogContent = document.getElementById('changelog-content');
-    const changelogToggle = document.getElementById('changelog-toggle');
+    const mobileVersionNumber = document.querySelector('.mobile-footer-version .version-number');
+    const mobileVersionBadge = document.querySelector('.mobile-footer-version .version-badge');
+    const changelogSection = document.querySelector('.changelog-section');
+    const changelogContent = document.querySelector('.changelog-content');
     const closeChangelogBtn = document.querySelector('.close-changelog');
-    
-    // Make mobile version number clickable to show changelog
-    if (mobileVersionNumber) {
-        mobileVersionNumber.addEventListener('click', function() {
-            changelogContent.style.display = 'block';
-        });
-    }
-    
-    // Ensure existing changelog toggle functionality works
-    if (changelogToggle) {
-        changelogToggle.addEventListener('click', function() {
-            changelogContent.style.display = 'block';
-        });
-    }
-    
-    // Ensure close button works
-    if (closeChangelogBtn) {
-        closeChangelogBtn.addEventListener('click', function() {
-            changelogContent.style.display = 'none';
-        });
-    }
-});
+    const changelogToggleBtn = document.getElementById('changelog-toggle'); // Add this line
 
-// Changelog functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const mobileVersionNumber = document.querySelector('.mobile-footer .version-number');
-    const changelogContent = document.getElementById('changelog-content');
-    const changelogToggle = document.getElementById('changelog-toggle');
-    const closeChangelogBtn = document.querySelector('.close-changelog');
-    
-    // Make mobile version number clickable to show changelog
-    if (mobileVersionNumber) {
-        mobileVersionNumber.addEventListener('click', function() {
-            changelogContent.style.display = 'block';
-        });
+    function showChangelog() {
+        if (window.innerWidth <= 768) {
+            changelogSection.classList.add('active');
+        }
+        changelogContent.style.display = 'block';
     }
-    
-    // Ensure existing changelog toggle functionality works
-    if (changelogToggle) {
-        changelogToggle.addEventListener('click', function() {
-            changelogContent.style.display = 'block';
-        });
-    }
-    
-    // Ensure close button works
-    if (closeChangelogBtn) {
-        closeChangelogBtn.addEventListener('click', function() {
+
+    function hideChangelog() {
+        changelogSection.classList.remove('active');
+        setTimeout(() => {
             changelogContent.style.display = 'none';
-        });
+        }, 300); // Match the CSS transition duration
     }
-    
-    // Close changelog when clicking outside
+
+    // Add click handler for changelog toggle button
+    if (changelogToggleBtn) {
+        changelogToggleBtn.addEventListener('click', showChangelog);
+    }
+
+    // Mobile version click handlers
+    if (mobileVersionNumber) {
+        mobileVersionNumber.addEventListener('click', showChangelog);
+    }
+
+    if (mobileVersionBadge) {
+        mobileVersionBadge.addEventListener('click', showChangelog);
+    }
+
+    // Close button handler
+    if (closeChangelogBtn) {
+        closeChangelogBtn.addEventListener('click', hideChangelog);
+    }
+
+    // Close on click outside
     document.addEventListener('click', function(event) {
         if (changelogContent.style.display === 'block' && 
             !changelogContent.contains(event.target) && 
-            !changelogToggle.contains(event.target) && 
-            !(mobileVersionNumber && mobileVersionNumber.contains(event.target))) {
-            changelogContent.style.display = 'none';
+            !(mobileVersionNumber && mobileVersionNumber.contains(event.target)) &&
+            !(mobileVersionBadge && mobileVersionBadge.contains(event.target)) &&
+            !(changelogToggleBtn && changelogToggleBtn.contains(event.target))) { // Add changelog button check
+            hideChangelog();
         }
     });
 });
