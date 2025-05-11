@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SpyDock Admin Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="admin-responsive.css">
 </head>
 <body>
     <div class="admin-container">
@@ -326,11 +327,20 @@
             data.games.forEach(game => {
                 const gameElement = document.createElement('div');
                 gameElement.className = 'game-card';
+                
+                // Create a more responsive and visually appealing game card
+                const statusClass = game.status === 'In Progress' ? 'status-active' : 'status-waiting';
+                
                 gameElement.innerHTML = `
                     <div class="game-info">
-                        <h3>Game #${game.id}</h3>
-                        <p>Players: ${game.players.length}</p>
-                        <p>Status: ${game.status}</p>
+                        <div class="game-header">
+                            <h3>Game #${game.id}</h3>
+                            <span class="game-status ${statusClass}">${game.status}</span>
+                        </div>
+                        <div class="game-details">
+                            <p><i class="fas fa-users"></i> <span>${game.players.length} Players</span></p>
+                            <p><i class="fas fa-${game.status === 'In Progress' ? 'play-circle' : 'clock'}"></i> <span>${game.status}</span></p>
+                        </div>
                     </div>
                 `;
                 gamesList.appendChild(gameElement);
@@ -407,4 +417,4 @@
         }
     </script>
 </body>
-</html> 
+</html>

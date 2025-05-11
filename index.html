@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SpyDock - A Social Deduction Game</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="responsive.css">
+    <link rel="stylesheet" href="skip-button.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -164,7 +166,7 @@
                 <i class="fas fa-user-secret"></i>
                 <p>The spy was: <span id="spy-name"></span></p>
             </div>
-            <button id="play-again-btn" class="btn">
+            <button onclick="window.location.reload()" class="btn refresh-btn">
                 <i class="fas fa-redo"></i>
                 Play Again
             </button>
@@ -194,7 +196,7 @@
     <div id="notification-container" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999;"></div>
     <!-- Built by Knox -->
     <div class="version-info">
-        <span class="version-number">v1.9</span>
+        <span class="version-number">v2.0</span>
         <span class="version-badge alpha">Alpha</span>
     </div>
 
@@ -202,7 +204,7 @@
         <!-- Built by Knox -->
         <div class="mobile-footer-content">
             <div class="mobile-footer-version">
-                <span class="version-number">v1.9</span>
+                <span class="version-number">v2.0</span>
                 <span class="version-badge alpha">Alpha</span>
             </div>
             <div class="mobile-footer-crafted">
@@ -229,25 +231,26 @@
             <div class="changelog-entries">
                 <div class="changelog-entry">
                     <div class="version-header">
-                        <span class="version-number">v1.9</span>
+                        <span class="version-number">v2.0</span>
                         <span class="version-date">Current</span>
+                    </div>
+                    <ul class="changes-list">
+                        <li>Fixed the play Again Button</li>
+                        <li>Added new Skip Button in discussion time</li>
+                        <li>Added More Guess Words</li>
+                        <li>Improved game stability</li>
+                    </ul>
+                </div>
+                <div class="changelog-entry">
+                    <div class="version-header">
+                        <span class="version-number">v1.9</span>
+                        <span class="version-date">Previous</span>
                     </div>
                     <ul class="changes-list">
                         <li>Improved the in app notification</li>
                         <li>Improve the cancel button</li>
                         <li>Improved game stability</li>
                         <li>Now mobile user can click on the version to view the changelogs </li>
-                    </ul>
-                </div>
-                <div class="changelog-entry">
-                    <div class="version-header">
-                        <span class="version-number">v1.8</span>
-                        <span class="version-date">Previous</span>
-                    </div>
-                    <ul class="changes-list">
-                        <li>Added changelog feature</li>
-                        <li>New players cannot join after game has started</li>
-                        <li>Improved game stability</li>
                     </ul>
                 </div>
             </div>
@@ -257,5 +260,6 @@
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <!-- Built by Knox -->
     <script src="app.js"></script>
+    <script src="skip-button.js"></script>
 </body>
 </html>

@@ -55,7 +55,6 @@ const spyNameDisplay = document.getElementById('spy-name');
 const onlinePlayersBar = document.getElementById('online-players-bar');
 const onlinePlayersCount = document.getElementById('online-players-count');
 const onlinePlayersList = document.getElementById('online-players-list');
-const playAgainBtn = document.getElementById('play-again-btn');
 
 // Built by Knox
 // Add a ready players bar to the role screen
@@ -404,9 +403,6 @@ function setupEventListeners() {
     
     // Voting screen
     submitVoteBtn.addEventListener('click', submitVote);
-
-    // Results screen
-    playAgainBtn.addEventListener('click', handlePlayAgain);
 }
 
 // Built by Knox
@@ -1751,53 +1747,73 @@ function disableVotingUI() {
     }
 }
 
-function handlePlayAgain() {
-    // If player was the host, create a new game
-    if (isHost) {
-        createGame();
-    } else {
-        // For non-host players, show the welcome screen with their name preserved
-        showScreen(welcomeScreen);
-        playerNameInput.value = playerName;
-        showNotification('Ready to join a new game!', 'info');
-    }
-}
-
 // Initialize the game when the page loads
 window.addEventListener('load', initGame);
 
 // Changelog functionality
 document.addEventListener('DOMContentLoaded', function() {
-    const changelogToggle = document.getElementById('changelog-toggle');
+    const mobileVersionNumber = document.querySelector('.mobile-footer .version-number');
     const changelogContent = document.getElementById('changelog-content');
-    const closeChangelog = document.querySelector('.close-changelog');
-    const changelogSection = document.querySelector('.changelog-section');
-    const mobileVersion = document.querySelector('.mobile-footer-version');
+    const changelogToggle = document.getElementById('changelog-toggle');
+    const closeChangelogBtn = document.querySelector('.close-changelog');
+    
+    // Make mobile version number clickable to show changelog
+    if (mobileVersionNumber) {
+        mobileVersionNumber.addEventListener('click', function() {
+            changelogContent.style.display = 'block';
+        });
+    }
+    
+    // Ensure existing changelog toggle functionality works
+    if (changelogToggle) {
+        changelogToggle.addEventListener('click', function() {
+            changelogContent.style.display = 'block';
+        });
+    }
+    
+    // Ensure close button works
+    if (closeChangelogBtn) {
+        closeChangelogBtn.addEventListener('click', function() {
+            changelogContent.style.display = 'none';
+        });
+    }
+});
 
-    // Desktop changelog toggle
-    changelogToggle.addEventListener('click', function() {
-        changelogContent.classList.toggle('active');
-    });
-
-    // Mobile version click
-    mobileVersion.addEventListener('click', function() {
-        changelogSection.classList.add('active');
-        changelogContent.classList.add('active');
-    });
-
-    // Close changelog
-    closeChangelog.addEventListener('click', function() {
-        changelogContent.classList.remove('active');
-        changelogSection.classList.remove('active');
-    });
-
+// Changelog functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileVersionNumber = document.querySelector('.mobile-footer .version-number');
+    const changelogContent = document.getElementById('changelog-content');
+    const changelogToggle = document.getElementById('changelog-toggle');
+    const closeChangelogBtn = document.querySelector('.close-changelog');
+    
+    // Make mobile version number clickable to show changelog
+    if (mobileVersionNumber) {
+        mobileVersionNumber.addEventListener('click', function() {
+            changelogContent.style.display = 'block';
+        });
+    }
+    
+    // Ensure existing changelog toggle functionality works
+    if (changelogToggle) {
+        changelogToggle.addEventListener('click', function() {
+            changelogContent.style.display = 'block';
+        });
+    }
+    
+    // Ensure close button works
+    if (closeChangelogBtn) {
+        closeChangelogBtn.addEventListener('click', function() {
+            changelogContent.style.display = 'none';
+        });
+    }
+    
     // Close changelog when clicking outside
     document.addEventListener('click', function(event) {
-        if (!changelogContent.contains(event.target) && 
+        if (changelogContent.style.display === 'block' && 
+            !changelogContent.contains(event.target) && 
             !changelogToggle.contains(event.target) && 
-            !mobileVersion.contains(event.target)) {
-            changelogContent.classList.remove('active');
-            changelogSection.classList.remove('active');
+            !(mobileVersionNumber && mobileVersionNumber.contains(event.target))) {
+            changelogContent.style.display = 'none';
         }
     });
 });

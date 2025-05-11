@@ -973,33 +973,6 @@ input, select {
     color: var(--primary-color);
 }
 
-#play-again-btn {
-    margin-top: 24px;
-    background: var(--background-gradient);
-    color: white;
-    border: none;
-    border-radius: var(--border-radius);
-    padding: 14px 24px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-#play-again-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-#play-again-btn:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
 /* Crafted By Container */
 .crafted-by {
     position: fixed;
@@ -2323,4 +2296,33 @@ input, select {
     .changelog-toggle {
         display: none;
     }
+}
+
+/* Refresh Button Styles */
+.refresh-btn {
+    margin-top: 20px;
+    background: var(--primary-color);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.refresh-btn:hover {
+    background: var(--secondary-color);
+    transform: scale(1.05);
+}
+
+.refresh-btn i {
+    margin-right: 8px;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.refresh-btn:hover i {
+    animation: spin 1s linear;
 }

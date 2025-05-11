@@ -34,6 +34,14 @@ app.get('*', (req, res) => {
 // In-memory game state
 const games = {};
 
+// Function to add skip functionality to game object
+function addSkipFunctionalityToGame(game) {
+  if (!game.skippedPlayers) {
+    game.skippedPlayers = [];
+  }
+  return game;
+}
+
 // Built by Knox
 // Game ID generation
 function generateGameId() {
@@ -140,7 +148,8 @@ io.on('connection', (socket) => {
       spy: null,
       votes: {},
       readyPlayers: [],
-      currentRound: null
+      currentRound: null,
+      skippedPlayers: []
     };
     currentGameId = gameId;
     currentPlayer = player;
@@ -234,6 +243,7 @@ io.on('connection', (socket) => {
     
     // Initialize the round counter
     game.currentRound = 1;
+    game.skippedPlayers = [];
     
     // Assign roles and words
     const playerRoles = game.players.map(player => {
@@ -319,6 +329,9 @@ io.on('connection', (socket) => {
     }
     if (game.readyPlayers.length === game.players.length) {
       io.to(currentGameId).emit('all-players-ready', {});
+      
+      // Reset skipped players for the new round
+      game.skippedPlayers = [];
       
       // Start the timer when all players are ready
       if (game.timerData) {
@@ -486,10 +499,13 @@ io.on('connection', (socket) => {
                 message: 'You have been voted out! Your voting rights have been disabled, but you can still observe the game.'
             });
             
-            // Check if there are enough active players left to continue (excluding kicked players)
-            const remainingActivePlayers = game.players.filter(p => !game.kickedPlayers.includes(p.id));
+            // Check if there are enough active players left to continue (excluding kicked and disconnected players)
+            const remainingActivePlayers = game.players.filter(p => (
+                !game.kickedPlayers.includes(p.id) && 
+                !game.disconnectedPlayers?.some(dp => dp.id === p.id)
+            ));
             
-            if (remainingActivePlayers.length < 3) {
+            if (remainingActivePlayers.length > 0 && remainingActivePlayers.length < 3) {
                 // Not enough active players left, spies win
                 io.to(currentGameId).emit('voting-results', {
                     votedPlayer,
@@ -501,7 +517,7 @@ io.on('connection', (socket) => {
                     kickedPlayerName: kickedPlayer?.name || '',
                     gameOver: true,
                     winner: 'spy',
-                    message: 'Not enough players left. The spy wins!'
+                    message: 'Game over! Not enough active players left (minimum 3 required). The spy wins!'
                 });
             } else if (game.currentRound === 2) {
                 // This was the second round and they still didn't catch the spy - spy wins
@@ -594,17 +610,48 @@ io.on('connection', (socket) => {
     });
   });
 
-  socket.on('play-again', () => {
-      if (!currentGameId) return;
-      const game = games[currentGameId];
-      if (game) {
-        // Clear game state immediately
-        delete games[currentGameId];
+  // Player skip handling
+  socket.on('player-skip', ({ gameId }) => {
+    if (!gameId) return;
+    const game = games[gameId];
+    if (!game) return;
+    
+    // Get current player
+    const currentPlayer = game.players.find(p => p.id === socket.id);
+    if (!currentPlayer) return;
+    
+    // Add player to skipped players if not already there
+    if (!game.skippedPlayers.includes(socket.id)) {
+      game.skippedPlayers.push(socket.id);
+      
+      // Emit skip update to all players
+      io.to(gameId).emit('skip-update', {
+        skippedPlayers: game.skippedPlayers,
+        totalPlayers: game.players.length,
+        lastSkippedPlayer: socket.id,
+        lastSkippedPlayerName: currentPlayer.name
+      });
+      
+      // Check if all players have skipped
+      if (game.skippedPlayers.length === game.players.length) {
+        // Emit all players skipped event
+        io.to(gameId).emit('all-players-skipped');
+        
+        // End the timer
+        if (game.timer) {
+          clearInterval(game.timerInterval);
+          game.timer = null;
+        }
+        
+        // Reset skipped players for next round
+        game.skippedPlayers = [];
+        
+        // Trigger timer ended event to move to voting screen
+        io.to(gameId).emit('timer-ended');
       }
-      // Redirect all players to homepage
-      io.to(currentGameId).emit('redirect', '/?playAgain=' + Date.now());
+    }
   });
-
+  
   socket.on('disconnect', () => {
     // Remove user from connected users set
     connectedUsers.delete(socket.id);
@@ -709,12 +756,13 @@ io.on('connection', (socket) => {
               disconnectedPlayers: game.disconnectedPlayers
             });
             
-            // If game is in progress and there are not enough players, end the game
-            if (game.currentRound && activePlayers.length < 3) {
+            // If game is in progress, check for minimum players required
+            const activePlayersCount = activePlayers.filter(p => !game.kickedPlayers?.includes(p.id)).length;
+            if (game.currentRound && activePlayersCount > 0 && activePlayersCount < 3) {
               io.to(currentGameId).emit('voting-results', {
                 gameOver: true,
                 winner: 'spy',
-                message: `Not enough players left. The game has ended.`,
+                message: `Game over! Not enough active players left (minimum 3 required).`,
                 word: game.wordPair.regular,
                 spyWord: game.wordPair.spy,
                 spyName: game.players.find(p => p.id === game.spy)?.name || 'Unknown'
