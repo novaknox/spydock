@@ -1,0 +1,288 @@
+/* Dark mode styles for discussion page - preserving original layout */
+
+/* Crafted By Container - Fix for dark mode */
+[data-theme="dark"] .crafted-by {
+    background: rgba(31, 41, 55, 0.9);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(129, 140, 248, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] .crafted-by:hover {
+    background: rgba(31, 41, 55, 0.95);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+[data-theme="dark"] .crafted-by-social {
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Version Info - Fix for dark mode */
+[data-theme="dark"] .version-info {
+    background: rgba(31, 41, 55, 0.9);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(129, 140, 248, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] .version-info:hover {
+    background: rgba(31, 41, 55, 0.95);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* Game Header */
+[data-theme="dark"] .game-header {
+    background-color: var(--game-card-bg);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .game-header h2 {
+    color: var(--text-primary);
+}
+
+/* Players Worlds */
+[data-theme="dark"] .players-worlds {
+    background-color: var(--game-card-bg);
+}
+
+[data-theme="dark"] .players-worlds-list {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .player-world-card {
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .player-world-card .player-word {
+    color: var(--text-secondary);
+}
+
+/* Chat Container */
+[data-theme="dark"] .chat-container {
+    background-color: var(--game-card-bg);
+}
+
+[data-theme="dark"] .chat-messages {
+    background-color: var(--chat-bg);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .message {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .message.sent {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+[data-theme="dark"] .message.received {
+    background-color: var(--message-bg);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .chat-input {
+    background-color: var(--game-card-bg);
+    border-top-color: var(--input-border);
+}
+
+[data-theme="dark"] .chat-input input {
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+    border-color: var(--input-border);
+}
+
+[data-theme="dark"] .chat-input input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.2);
+}
+
+/* Ensure visibility of elements in dark mode */
+[data-theme="dark"] #game-screen {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .sender {
+    color: var(--primary-color);
+}
+
+[data-theme="dark"] .message.sent .sender {
+    color: white;
+}
+
+/* Timer */
+[data-theme="dark"] .timer {
+    background-color: var(--timer-bg);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .timer i {
+    color: var(--primary-color);
+}
+
+[data-theme="dark"] .timer-controls .btn-small {
+    background-color: var(--card-bg);
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+[data-theme="dark"] .timer-controls .btn-small:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Voting Screen */
+[data-theme="dark"] .voting-instruction {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .voting-status-bar {
+    background: var(--game-card-bg);
+    color: var(--text-primary);
+    box-shadow: var(--box-shadow);
+    border: 1px solid var(--input-border);
+}
+
+[data-theme="dark"] .voting-status-header {
+    color: var(--primary-color);
+}
+
+[data-theme="dark"] .voting-status-progress {
+    background: var(--chat-bg);
+}
+
+[data-theme="dark"] .voting-status-progress-bar {
+    background: var(--primary-color);
+}
+
+[data-theme="dark"] .voting-status-player {
+    background: var(--card-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--input-border);
+}
+
+[data-theme="dark"] .voting-status-player.voted {
+    background: var(--game-card-bg);
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+[data-theme="dark"] .voting-status-bar .player-vote {
+    background: var(--card-bg);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .voting-status-bar .player-vote.voted {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* Vote options - these are the clickable player cards */
+[data-theme="dark"] .vote-option {
+    background-color: var(--vote-option-bg);
+    border-color: var(--vote-option-border);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .vote-option:hover {
+    border-color: var(--primary-color);
+    background-color: var(--vote-option-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Selected vote option */
+[data-theme="dark"] .vote-option.selected {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* Player avatar in vote options */
+[data-theme="dark"] .vote-option .player-avatar {
+    background-color: var(--input-bg);
+    color: var(--text-secondary);
+}
+
+/* Player avatar in selected vote option */
+[data-theme="dark"] .vote-option.selected .player-avatar {
+    background-color: white;
+    color: var(--primary-color);
+}
+
+/* Player name in vote options */
+[data-theme="dark"] .vote-option .player-name {
+    color: var(--text-primary);
+}
+
+/* Player name in selected vote option */
+[data-theme="dark"] .vote-option.selected .player-name {
+    color: white;
+}
+
+/* Disconnected player in voting options */
+[data-theme="dark"] .vote-option.disconnected-player {
+    opacity: 0.7;
+    border-color: var(--error-color);
+}
+
+[data-theme="dark"] .vote-option.disconnected-player::after {
+    content: "Disconnected";
+    display: block;
+    font-size: 0.8rem;
+    color: var(--error-color);
+    margin-top: 5px;
+}
+
+/* Spectator mode in voting screen */
+[data-theme="dark"] .voting-header.spectator-mode h2 {
+    color: var(--primary-color);
+}
+
+[data-theme="dark"] .voting-status-bar.spectator-mode {
+    border-color: var(--primary-color);
+    background-color: var(--game-card-bg);
+}
+
+[data-theme="dark"] .voting-status-bar.spectator-mode .voting-status-header {
+    color: var(--primary-color);
+}
+
+[data-theme="dark"] .voting-status-player.spectator {
+    background-color: var(--game-card-bg);
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Kicked player styles */
+[data-theme="dark"] .voting-status-player.kicked {
+    background-color: var(--error-color);
+    color: white;
+    opacity: 0.8;
+}
+
+/* Mobile Footer - Fix for dark mode */
+[data-theme="dark"] .mobile-footer {
+    background: rgba(31, 41, 55, 0.95);
+    backdrop-filter: blur(8px);
+    border-top: 1px solid rgba(129, 140, 248, 0.2);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] .mobile-footer-version {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .mobile-footer-crafted {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .mobile-footer-crafted span {
+    color: var(--primary-color);
+}
+
+[data-theme="dark"] .mobile-footer .version-number:hover,
+[data-theme="dark"] .mobile-footer .version-number:active {
+    background-color: rgba(255, 255, 255, 0.1);
+}

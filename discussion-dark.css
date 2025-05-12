@@ -1,0 +1,144 @@
+/* Dark mode styles for discussion page */
+
+/* Game screen */
+[data-theme="dark"] #game-screen {
+    color: #f7fafc;
+}
+
+/* Chat container */
+[data-theme="dark"] .chat-container {
+    background-color: #1f2937;
+    border: 1px solid #374151;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 20px;
+}
+
+/* Chat messages */
+[data-theme="dark"] #chat-messages {
+    background-color: #111827;
+    color: #f7fafc;
+    border: 1px solid #374151;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Chat input container */
+[data-theme="dark"] .chat-input {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* Message input */
+[data-theme="dark"] #message-input {
+    background-color: #374151;
+    color: #f7fafc;
+    border: 1px solid #4b5563;
+    border-radius: 8px;
+    padding: 10px;
+    flex: 1;
+}
+
+/* Send button */
+[data-theme="dark"] #send-btn {
+    background-color: #818cf8;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+/* Messages */
+[data-theme="dark"] .message {
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    max-width: 80%;
+}
+
+[data-theme="dark"] .message.sent {
+    background-color: #818cf8;
+    color: white;
+    margin-left: auto;
+}
+
+[data-theme="dark"] .message.received {
+    background-color: #374151;
+    color: #f7fafc;
+}
+
+[data-theme="dark"] .message .sender {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+[data-theme="dark"] .message.sent .sender {
+    color: white;
+}
+
+[data-theme="dark"] .message.received .sender {
+    color: #818cf8;
+}
+
+/* Game header */
+[data-theme="dark"] .game-header {
+    background-color: #1f2937;
+    color: #f7fafc;
+    border: 1px solid #374151;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+[data-theme="dark"] .game-header h2 {
+    color: #f7fafc;
+    margin: 0;
+}
+
+/* Timer */
+[data-theme="dark"] #game-timer {
+    background-color: #111827;
+    color: #f7fafc;
+    padding: 8px 15px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+[data-theme="dark"] #game-timer i {
+    color: #818cf8;
+}
+
+/* Players worlds */
+[data-theme="dark"] .players-worlds {
+    margin-bottom: 20px;
+}
+
+/* Players worlds list */
+[data-theme="dark"] .players-worlds-list {
+    background-color: #1f2937;
+    border: 1px solid #374151;
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Player world */
+[data-theme="dark"] .player-world {
+    background-color: #111827;
+    border: 1px solid #374151;
+    border-radius: 8px;
+    padding: 10px;
+    color: #f7fafc;
+}

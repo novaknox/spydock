@@ -72,7 +72,8 @@ readyPlayersBar.style.color = '#059669';
 // Move readyPlayersBar below the role title for visibility
 const roleTitle = roleScreen.querySelector('h2');
 roleScreen.insertBefore(readyPlayersBar, roleTitle.nextSibling);
-readyPlayersBar.style.background = '#f0fdf4';
+readyPlayersBar.style.background = 'var(--ready-bar-bg)';
+readyPlayersBar.style.color = 'var(--ready-bar-text)';
 readyPlayersBar.style.padding = '8px 0 8px 0';
 readyPlayersBar.style.borderRadius = '8px';
 readyPlayersBar.style.margin = '16px 0 16px 0';
@@ -90,21 +91,21 @@ function updateReadyPlayersBar() {
         readyHeader.style.textAlign = 'center';
         readyHeader.style.width = '100%';
         readyHeader.style.fontWeight = 'bold';
-        readyHeader.style.color = '#059669';
+        readyHeader.style.color = 'var(--ready-bar-text)';
         readyHeader.innerHTML = `<i class='fas fa-bell' style='margin-right:6px;'></i> Ready Players: ${readyPlayerIds.length}/${players.length}`;
         
         // Create progress bar to visually show ready status
         const progressContainer = document.createElement('div');
         progressContainer.style.width = '100%';
         progressContainer.style.height = '8px';
-        progressContainer.style.background = '#ecfdf5';
+        progressContainer.style.background = 'var(--ready-progress-bg)';
         progressContainer.style.borderRadius = '4px';
         progressContainer.style.marginBottom = '12px';
         
         const progressBar = document.createElement('div');
         progressBar.style.width = `${(readyPlayerIds.length / players.length) * 100}%`;
         progressBar.style.height = '100%';
-        progressBar.style.background = '#10b981';
+        progressBar.style.background = 'var(--ready-progress-fill)';
         progressBar.style.borderRadius = '4px';
         progressBar.style.transition = 'width 0.5s ease';
         
@@ -127,8 +128,8 @@ function updateReadyPlayersBar() {
         const readyPlayers = players.filter(p => readyPlayerIds.includes(p.id));
         readyPlayers.forEach(player => {
             const playerAvatar = document.createElement('div');
-            playerAvatar.style.background = '#d1fae5';
-            playerAvatar.style.color = '#059669';
+            playerAvatar.style.background = 'var(--ready-player-bg)';
+            playerAvatar.style.color = 'var(--ready-player-text)';
             playerAvatar.style.borderRadius = '999px';
             playerAvatar.style.padding = avatarSize;
             playerAvatar.style.fontSize = fontSize;
@@ -163,8 +164,8 @@ function updateReadyPlayersBar() {
         const waitingPlayers = players.filter(p => !readyPlayerIds.includes(p.id));
         waitingPlayers.forEach(player => {
             const playerAvatar = document.createElement('div');
-            playerAvatar.style.background = '#f3f4f6';
-            playerAvatar.style.color = '#6b7280';
+            playerAvatar.style.background = 'var(--waiting-player-bg)';
+            playerAvatar.style.color = 'var(--waiting-player-text)';
             playerAvatar.style.borderRadius = '999px';
             playerAvatar.style.padding = avatarSize;
             playerAvatar.style.fontSize = fontSize;
@@ -211,6 +212,9 @@ function updateReadyPlayersBar() {
             `;
             document.head.appendChild(style);
         }
+        
+        // Dispatch event for theme handler to update styling
+        document.dispatchEvent(new CustomEvent('readyPlayersBarUpdated'));
     } else {
         readyPlayersBar.style.display = 'none';
     }
@@ -1819,6 +1823,29 @@ document.addEventListener('DOMContentLoaded', function() {
             !(mobileVersionBadge && mobileVersionBadge.contains(event.target)) &&
             !(changelogToggleBtn && changelogToggleBtn.contains(event.target))) { // Add changelog button check
             hideChangelog();
+        }
+    });
+});
+
+// Theme toggle implementation
+document.addEventListener('DOMContentLoaded', () => {
+    const themeToggle = document.getElementById('theme-toggle');
+    
+    // Check for saved theme preference
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        themeToggle.checked = true;
+    }
+
+    // Theme toggle handler
+    themeToggle.addEventListener('change', (e) => {
+        if (e.target.checked) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
         }
     });
 });

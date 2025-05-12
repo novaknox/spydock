@@ -18,6 +18,78 @@
     --error-color: #ef4444;
     --border-radius: 12px;
     --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    
+    /* Ready players bar colors */
+    --ready-bar-bg: #f0fdf4;
+    --ready-bar-text: #059669;
+    --ready-progress-bg: #ecfdf5;
+    --ready-progress-fill: #10b981;
+    --ready-player-bg: #d1fae5;
+    --ready-player-text: #059669;
+    --waiting-player-bg: #f3f4f6;
+    --waiting-player-text: #6b7280;
+}
+
+[data-theme="dark"] {
+    --primary-color: #818cf8;
+    --secondary-color: #9f7aea;
+    --background-gradient: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+    --card-bg: rgba(26, 32, 44, 0.95);
+    --text-primary: #f7fafc;
+    --text-secondary: #cbd5e0;
+    --success-color: #31c48d;
+    --error-color: #f98080;
+    --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.15);
+    --input-bg: #374151;
+    --input-border: #4b5563;
+    --input-focus-border: #818cf8;
+    --game-card-bg: #1f2937;
+    --message-bg: #1f2937;
+    --chat-bg: #111827;
+    --vote-option-bg: #1f2937;
+    --vote-option-border: #374151;
+    --vote-option-hover: #374151;
+    --logs-bg: #1f2937;
+    --log-bg: #111827;
+    --settings-bg: #1f2937;
+    --role-card-bg: rgba(31, 41, 55, 0.95);
+    --role-card-border: rgba(129, 140, 248, 0.2);
+    --players-list-bg: #1f2937;
+    --player-card-bg: #111827;
+    --timer-bg: #111827;
+    --online-bar-bg: #1f2937;
+    --select-bg: #374151;
+    --select-text: #f7fafc;
+    --select-border: #4b5563;
+    --select-option-bg: #1f2937;
+    --select-option-text: #f7fafc;
+    --select-hover-bg: #4b5563;
+    --notification-bg: rgba(31, 41, 55, 0.95);
+    --notification-text: #f7fafc;
+    --notification-border: rgba(129, 140, 248, 0.2);
+    --notification-shadow: 0 6px 32px 0 rgba(0, 0, 0, 0.3), 0 1.5px 6px 0 rgba(0, 0, 0, 0.2);
+    
+    /* Ready players bar colors - dark mode */
+    --ready-bar-bg: #0f172a;
+    --ready-bar-text: #31c48d;
+    --ready-progress-bg: #1f2937;
+    --ready-progress-fill: #31c48d;
+    --ready-player-bg: #1f2937;
+    --ready-player-text: #31c48d;
+    --waiting-player-bg: #111827;
+    --waiting-player-text: #9ca3af;
+    
+    /* Chat container colors - dark mode */
+    --chat-container-bg: #111827;
+    --chat-container-border: #374151;
+    --chat-messages-bg: #111827;
+    --chat-input-bg: #1f2937;
+    --chat-input-text: #f7fafc;
+    --chat-input-border: #4b5563;
+    --chat-sent-message-bg: #818cf8;
+    --chat-sent-message-text: #ffffff;
+    --chat-received-message-bg: #1f2937;
+    --chat-received-message-text: #f7fafc;
 }
 
 body {
@@ -48,7 +120,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #f4f6fb;
+    background: var(--online-bar-bg);
     color: var(--text-primary);
     padding: 12px 20px;
     font-weight: 500;
@@ -57,6 +129,8 @@ body {
     margin-bottom: 20px;
     gap: 12px;
     flex-wrap: wrap;
+    border: 1px solid var(--input-border);
+    backdrop-filter: blur(8px);
 }
 
 .online-indicator {
@@ -135,12 +209,19 @@ body {
 
 input, select {
     padding: 14px 20px;
-    border: 2px solid #e5e7eb;
+    border: 2px solid var(--input-border);
     border-radius: var(--border-radius);
     font-size: 1rem;
     transition: all 0.3s ease;
-    background-color: #f9fafb;
+    background-color: var(--input-bg);
     width: 100%;
+    color: var(--text-primary);
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.1);
 }
 
 /* Built by Knox */
@@ -182,10 +263,12 @@ input, select {
     justify-content: center;
     gap: 12px;
     margin-bottom: 24px;
-    background-color: #f3f4f6;
+    background-color: var(--game-card-bg);
+    color: var(--text-primary);
     padding: 16px;
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
+    border: 1px solid var(--input-border);
 }
 
 .game-code-container {
@@ -202,16 +285,16 @@ input, select {
     letter-spacing: 2px;
     color: var(--primary-color);
     font-size: 1.2rem;
-    background: white;
+    background: var(--card-bg);
     padding: 8px 16px;
     border-radius: var(--border-radius);
     text-transform: uppercase;
-
+    border: 1px solid var(--input-border);
 }
 
 /* Players List */
 .players-list, .game-settings {
-    background-color: #f9fafb;
+    background-color: var(--players-list-bg);
     border-radius: var(--border-radius);
     padding: 20px;
     margin-bottom: 24px;
@@ -227,7 +310,7 @@ input, select {
 
 .players-list li {
     padding: 12px;
-    background: white;
+    background: var(--player-card-bg);
     border-radius: var(--border-radius);
     display: flex;
     align-items: center;
@@ -243,7 +326,7 @@ input, select {
     gap: 8px;
     margin-bottom: 16px;
     padding: 16px;
-    background-color: white;
+    background-color: var(--settings-bg);
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
 }
@@ -272,13 +355,13 @@ input, select {
     background-position: right 16px center;
     background-size: 16px;
     padding: 12px 40px 12px 16px;
-    border: 2px solid #e5e7eb;
+    border: 2px solid var(--input-border);
     border-radius: var(--border-radius);
     font-size: 0.95rem;
     color: var(--text-primary);
     cursor: pointer;
     transition: all 0.3s ease;
-    background-color: white;
+    background-color: var(--input-bg);
     min-width: 180px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
@@ -297,13 +380,13 @@ input, select {
 /* Select Option Styling */
 .setting select option {
     padding: 12px;
-    background-color: white;
-    color: var(--text-primary);
+    background-color: var(--select-option-bg);
+    color: var(--select-option-text);
     font-size: 0.95rem;
 }
 
 .setting select option:hover {
-    background-color: #f3f4f6;
+    background-color: var(--select-hover-bg);
 }
 
 .setting select option:checked {
@@ -350,13 +433,13 @@ input, select {
 
 /* Role Screen */
 .role-card {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%);
+    background: var(--role-card-bg);
     border-radius: var(--border-radius);
     padding: 32px;
     text-align: center;
     margin-bottom: 32px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-    border: 2px solid rgba(99, 102, 241, 0.1);
+    box-shadow: var(--box-shadow);
+    border: 2px solid var(--role-card-border);
     backdrop-filter: blur(8px);
     transform: translateY(0);
     transition: all 0.3s ease;
@@ -556,8 +639,8 @@ input, select {
 }
 
 .timer {
-    background-color: var(--primary-color);
-    color: white;
+    background-color: var(--timer-bg);
+    color: var(--text-primary);
     padding: 10px 20px;
     border-radius: var(--border-radius);
     font-weight: bold;
@@ -1439,11 +1522,12 @@ input, select {
     min-width: 320px;
     max-width: 600px;
     width: 100%;
-    background: rgba(255,255,255,0.92);
+    background: var(--notification-bg, rgba(255, 255, 255, 0.92));
+    color: var(--notification-text, var(--text-primary));
     backdrop-filter: blur(12px) saturate(1.1);
     border-radius: 16px;
-    box-shadow: 0 6px 32px 0 rgba(99,102,241,0.13), 0 1.5px 6px 0 rgba(139,92,246,0.10);
-    border: 1.5px solid rgba(99,102,241,0.10);
+    box-shadow: var(--notification-shadow, 0 6px 32px 0 rgba(99,102,241,0.13), 0 1.5px 6px 0 rgba(139,92,246,0.10));
+    border: 1.5px solid var(--notification-border, rgba(99,102,241,0.10));
     padding: 0;
     opacity: 0;
     z-index: 10000;
@@ -1460,6 +1544,7 @@ input, select {
 
 .modern-notification.show {
     opacity: 1;
+    pointer-events: all;
     transform: translateX(-50%) translateY(0);
 }
 
@@ -1482,10 +1567,10 @@ input, select {
     height: 32px;
     font-size: 1.3rem;
     border-radius: 50%;
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    background: var(--background-gradient);
     color: #fff;
-    box-shadow: 0 0 0 3px rgba(139,92,246,0.10);
-    border: 2px solid #fff;
+    box-shadow: 0 0 0 3px var(--notification-border, rgba(139,92,246,0.10));
+    border: 2px solid var(--notification-bg, #fff);
 }
 
 .notification-text {
@@ -1495,7 +1580,7 @@ input, select {
     white-space: normal;
     font-size: 1.05rem;
     line-height: 1.5;
-    color: #1f2937;
+    color: var(--notification-text, var(--text-primary));
     font-weight: 600;
     letter-spacing: 0.01em;
 }
@@ -2356,4 +2441,70 @@ input, select {
 
 .refresh-btn:hover i {
     animation: spin 1s linear;
+}
+
+/* Dark Mode Toggle */
+.theme-switch-wrapper {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    z-index: 100;
+    background: var(--card-bg);
+    padding: 8px 12px;
+    border-radius: 30px;
+    box-shadow: var(--box-shadow);
+}
+
+.theme-switch {
+    display: inline-block;
+    width: 50px;
+    height: 26px;
+    position: relative;
+    cursor: pointer;
+}
+
+.theme-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--text-secondary);
+    transition: .4s;
+    border-radius: 30px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background: var(--primary-color);
+}
+
+input:checked + .slider:before {
+    transform: translateX(24px);
+}
+
+.theme-switch-wrapper .theme-icon {
+    color: var(--text-primary);
+    margin: 0 8px;
+    font-size: 16px;
 }
